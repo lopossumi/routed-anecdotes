@@ -1,34 +1,42 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom'
+import { Container, Table, Form, Button, Grid, Image } from 'semantic-ui-react'
 
 const Menu = () => {
-  
-  const navStyle={
-    background:'#ddd',
-    padding:10,
+
+  const navStyle = {
+    background: '#ddd',
+    padding: 10,
   }
 
-  const active={
-    background:'blue',
+  const active = {
+    background: 'blue',
     color: 'white',
-    padding:10
+    padding: 10
   }
 
-  return(
-  <div style = {navStyle}>
-    <NavLink exact to='/' activeStyle={active}>anecdotes</NavLink>&nbsp;
+  return (
+    <div style={navStyle}>
+      <NavLink exact to='/' activeStyle={active}>anecdotes</NavLink>&nbsp;
     <NavLink exact to='/create' activeStyle={active}>create new</NavLink>&nbsp;
     <NavLink exact to='/about' activeStyle={active}>about</NavLink>&nbsp;
 </div>
-)
+  )
 }
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
-    </ul>
+    <Table striped celled>
+      <Table.Body>
+        {anecdotes.map(anecdote =>
+          <Table.Row key={anecdote.id} >
+            <Table.Cell>
+              <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+            </Table.Cell>
+          </Table.Row>)}
+      </Table.Body>
+    </Table>
   </div>
 )
 
@@ -41,7 +49,8 @@ const Anecdote = ({ anecdote }) => (
 )
 
 const About = () => (
-  <div>
+  <Grid>
+    <Grid.Column width={10}>
     <h2>About anecdote app</h2>
     <p>According to Wikipedia:</p>
 
@@ -51,18 +60,27 @@ const About = () => (
       An anecdote is "a story with a point."</em>
 
     <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
-  </div>
+  </Grid.Column>
+  <Grid.Column  width={6}>
+    <Image src="https://upload.wikimedia.org/wikipedia/commons/4/4f/KnuthAtOpenContentAlliance.jpg" />
+  </Grid.Column>
+  </Grid>
 )
 
-const Footer = () => (
-  <div>
+const Footer = () => {
+  const footerStyle = {
+    marginTop:50
+  }
+
+  return(<div style={footerStyle}>
+    <hr />
     Anecdote app for <a href='https://courses.helsinki.fi/fi/TKT21009/121540749'>Full Stack -sovelluskehitys</a>.
 
     See <a href='https://github.com/lopossumi/routed-anecdotes'>https://github.com/lopossumi/routed-anecdotes</a> for the source code.
-  </div>
-)
+  </div>)
+}
 
-const Notification = ({notification}) => {
+const Notification = ({ notification }) => {
   const style = {
     color: 'green',
     border: '1px solid',
@@ -70,7 +88,7 @@ const Notification = ({notification}) => {
     padding: 10,
     margin: 10
   }
-  return(notification && <div style={style}>{notification}</div>)
+  return (notification && <div style={style}>{notification}</div>)
 }
 
 class CreateNew extends React.Component {
@@ -101,26 +119,22 @@ class CreateNew extends React.Component {
 
   render() {
     return (
-      <div>
-        <h2>create a new anecdote</h2>
-        <form onSubmit={this.handleSubmit}>
-          <div>
-            content
-            <input name='content' value={this.state.content} onChange={this.handleChange} />
-          </div>
-          <div>
-            author
-            <input name='author' value={this.state.author} onChange={this.handleChange} />
-          </div>
-          <div>
-            url for more info
-            <input name='info' value={this.state.info} onChange={this.handleChange} />
-          </div>
-          <button>create</button>
-        </form>
-      </div>
+      <Form onSubmit={this.handleSubmit}>
+      <Form.Field>
+        <label>Content</label>
+        <input name='content' value={this.state.content} onChange={this.handleChange} />
+      </Form.Field>
+      <Form.Field>
+        <label>Author</label>
+        <input name='author' value={this.state.author} onChange={this.handleChange} />
+      </Form.Field>
+      <Form.Field>
+        <label>Url for more info</label>
+        <input name='info' value={this.state.info} onChange={this.handleChange} />
+      </Form.Field>
+      <Button type='submit'>Submit</Button>
+    </Form>
     )
-
   }
 }
 
@@ -178,24 +192,26 @@ class App extends React.Component {
 
   render() {
     return (
-      <Router>
-        <div>
-          <h1>Software anecdotes</h1>
-          <Menu />
-          <Notification notification={this.state.notification} />
-          <Route exact path='/' render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
-          <Route path='/create' render={({history}) => <CreateNew history={history} addNew={this.addNew} />} />
-          <Route path='/about' render={() => <About />} />
-          <Route
-            exact path='/anecdotes/:id'
-            render={({ match }) =>
-              <Anecdote anecdote={this.anecdoteById(match.params.id)} />
-            } />
+      <Container>
+        <Router>
+          <div>
+            <h1>Software anecdotes</h1>
+            <Menu />
+            <Notification notification={this.state.notification} />
+            <Route exact path='/' render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
+            <Route path='/create' render={({ history }) => <CreateNew history={history} addNew={this.addNew} />} />
+            <Route path='/about' render={() => <About />} />
+            <Route
+              exact path='/anecdotes/:id'
+              render={({ match }) =>
+                <Anecdote anecdote={this.anecdoteById(match.params.id)} />
+              } />
 
-          <Footer />
-        </div>
-      </Router>
-    );
+            <Footer />
+          </div>
+        </Router>
+      </Container>
+    )
   }
 }
 
