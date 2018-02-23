@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 const Menu = () => (
   <div>
     <Link to='/'>anecdotes</Link>&nbsp;
-  <Link to='/create'>create new</Link>&nbsp;
-  <Link to='/about'>about</Link>&nbsp;
+    <Link to='/create'>create new</Link>&nbsp;
+    <Link to='/about'>about</Link>&nbsp;
 </div>
 )
 
@@ -47,6 +47,17 @@ const Footer = () => (
     See <a href='https://github.com/lopossumi/routed-anecdotes'>https://github.com/lopossumi/routed-anecdotes</a> for the source code.
   </div>
 )
+
+const Notification = ({notification}) => {
+  const style = {
+    color: 'green',
+    border: '1px solid',
+    borderRadius: 10,
+    padding: 10,
+    margin: 10
+  }
+  return(notification && <div style={style}>{notification}</div>)
+}
 
 class CreateNew extends React.Component {
   constructor() {
@@ -157,7 +168,7 @@ class App extends React.Component {
         <div>
           <h1>Software anecdotes</h1>
           <Menu />
-          {this.state.notification}
+          <Notification notification={this.state.notification} />
           <Route exact path='/' render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
           <Route path='/create' render={({history}) => <CreateNew history={history} addNew={this.addNew} />} />
           <Route path='/about' render={() => <About />} />
